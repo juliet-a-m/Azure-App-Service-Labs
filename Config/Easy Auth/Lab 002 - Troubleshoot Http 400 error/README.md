@@ -16,7 +16,7 @@ Your goal is to find the root cause for the HTTP 400 error, fix the problem on A
 3.	Click on "Deploy". <br>
 
 ## Deployment Link:
-<a href="https://deploy.azure.com?repository=https://github.com/vijaysaayi/Azure-App-Service-EasyAuth-lab-001?ptmpl=https://rawcdn.githack.com/vijaysaayi/Azure-App-Service-EasyAuth-lab-001/b23eb336e1a3acac04c7e3b8c2b7a6ca58c94a7d/parameters.azuredeploy.json" target="_blank">
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https://raw.githubusercontent.com/vijaysaayi/Azure-App-Service-Labs/main/Config/Easy%20Auth/Lab%20002%20-%20Troubleshoot%20Http%20400%20error/azuredeploy.json?ptmpl=https://rawcdn.githack.com/vijaysaayi/Azure-App-Service-EasyAuth-lab-001/b23eb336e1a3acac04c7e3b8c2b7a6ca58c94a7d/parameters.azuredeploy.json" target="_blank">
     <img src="https://azurecomcdn.azureedge.net/mediahandler/acomblog/media/Default/blog/deploybutton.png"/>
 </a> 
 
