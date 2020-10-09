@@ -1,0 +1,684 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"alias": {
+			"type": "String"
+		}
+	},
+	"variables": {},
+	"resources": [
+		{
+			"type": "Microsoft.Network/networkSecurityGroups",
+			"apiVersion": "2020-05-01",
+			"name": "[concat('networkSecurityGroups_Azure_App_Service_Labs_VNET2_NSG_CASG_name_',parameters('alias'))]",
+			"location": "southeastasia",
+			"tags": {
+				"Creator": "Automatically added by CASG Azure Policy",
+				"CASG-Info": "http://aka.ms/cssbaselinesecurity"
+			},
+			"properties": {
+				"securityRules": []
+			}
+		},
+		{
+			"type": "Microsoft.Network/networkSecurityGroups",
+			"apiVersion": "2020-05-01",
+			"name": "[concat('networkSecurityGroups_Azure_App_Service_Labs_VNET_NSG_CASG_name_',parameters('alias'))]",
+			"location": "southeastasia",
+			"tags": {
+				"Creator": "Automatically added by CASG Azure Policy",
+				"CASG-Info": "http://aka.ms/cssbaselinesecurity"
+			},
+			"properties": {
+				"securityRules": [
+					{
+						"name": "CASG-Rule-101",
+						"properties": {
+							"description": "CSS Governance Security Rule.  Allow vnet inbound.  https://aka.ms/casg",
+							"protocol": "*",
+							"sourcePortRange": "*",
+							"destinationPortRange": "*",
+							"sourceAddressPrefix": "VirtualNetwork",
+							"destinationAddressPrefix": "*",
+							"access": "Allow",
+							"priority": 101,
+							"direction": "Inbound",
+							"sourcePortRanges": [],
+							"destinationPortRanges": [],
+							"sourceAddressPrefixes": [],
+							"destinationAddressPrefixes": []
+						}
+					},
+					{
+						"name": "CASG-Rule-103",
+						"properties": {
+							"description": "CSS Governance Security Rule.  Allow SAW inbound.  https://aka.ms/casg",
+							"protocol": "*",
+							"sourcePortRange": "*",
+							"destinationPortRange": "*",
+							"sourceAddressPrefix": "CorpNetSaw",
+							"destinationAddressPrefix": "*",
+							"access": "Allow",
+							"priority": 103,
+							"direction": "Inbound",
+							"sourcePortRanges": [],
+							"destinationPortRanges": [],
+							"sourceAddressPrefixes": [],
+							"destinationAddressPrefixes": []
+						}
+					},
+					{
+						"name": "CASG-Rule-104",
+						"properties": {
+							"description": "CSS Governance Security Rule.  Deny risky inbound.  https://aka.ms/casg",
+							"protocol": "*",
+							"sourcePortRange": "*",
+							"sourceAddressPrefix": "Internet",
+							"destinationAddressPrefix": "*",
+							"access": "Deny",
+							"priority": 104,
+							"direction": "Inbound",
+							"sourcePortRanges": [],
+							"destinationPortRanges": [
+								"13",
+								"17",
+								"19",
+								"22",
+								"23",
+								"53",
+								"69",
+								"111",
+								"119",
+								"123",
+								"135",
+								"137",
+								"138",
+								"139",
+								"161",
+								"162",
+								"389",
+								"445",
+								"512",
+								"514",
+								"593",
+								"636",
+								"873",
+								"1433",
+								"1434",
+								"1900",
+								"2049",
+								"2301",
+								"2381",
+								"3268",
+								"3306",
+								"3389",
+								"4333",
+								"5353",
+								"5432",
+								"5800",
+								"5900",
+								"5985",
+								"5986",
+								"6379",
+								"7000",
+								"7001",
+								"7199",
+								"9042",
+								"9160",
+								"9300",
+								"11211",
+								"16379",
+								"26379",
+								"27017"
+							],
+							"sourceAddressPrefixes": [],
+							"destinationAddressPrefixes": []
+						}
+					},
+					{
+						"name": "CASG-Rule-102",
+						"properties": {
+							"description": "CSS Governance Security Rule.  Allow Corpnet inbound.  https://aka.ms/casg",
+							"protocol": "*",
+							"sourcePortRange": "*",
+							"destinationPortRange": "*",
+							"sourceAddressPrefix": "CorpNetPublic",
+							"destinationAddressPrefix": "*",
+							"access": "Allow",
+							"priority": 102,
+							"direction": "Inbound",
+							"sourcePortRanges": [],
+							"destinationPortRanges": [],
+							"sourceAddressPrefixes": [],
+							"destinationAddressPrefixes": []
+						}
+					}
+				]
+			}
+		},
+		{
+			"type": "Microsoft.Network/publicIPAddresses",
+			"apiVersion": "2020-05-01",
+			"name": "[concat('publicIPAddresses_VNET_Lab1_VM_ip_name_',parameters('alias'))]",
+			"location": "southeastasia",
+			"sku": {
+				"name": "Basic"
+			},
+			"properties": {
+				"ipAddress": "23.97.54.108",
+				"publicIPAddressVersion": "IPv4",
+				"publicIPAllocationMethod": "Dynamic",
+				"idleTimeoutInMinutes": 4,
+				"ipTags": []
+			}
+		},
+		{
+			"type": "Microsoft.Web/serverfarms",
+			"apiVersion": "2018-02-01",
+			"name": "[concat('serverfarms_VNET_Lab1_ASP_name_',parameters('alias'))]",
+			"location": "Southeast Asia",
+			"sku": {
+				"name": "S1",
+				"tier": "Standard",
+				"size": "S1",
+				"family": "S",
+				"capacity": 1
+			},
+			"kind": "app",
+			"properties": {
+				"perSiteScaling": false,
+				"maximumElasticWorkerCount": 1,
+				"isSpot": false,
+				"reserved": false,
+				"isXenon": false,
+				"hyperV": false,
+				"targetWorkerCount": 0,
+				"targetWorkerSizeId": 0
+			}
+		},
+		{
+			"type": "Microsoft.Compute/virtualMachines",
+			"apiVersion": "2019-07-01",
+			"name": "[concat('virtualMachines_VNET_Lab1_VM_name_',parameters('alias'))]",
+			"location": "southeastasia",
+			"dependsOn": [
+				"[resourceId('Microsoft.Network/networkInterfaces', concat('networkInterfaces_vnet_lab1_vm_name_',parameters('alias')))]"
+			],
+			"properties": {
+				"hardwareProfile": {
+					"vmSize": "Standard_DS1_v2"
+				},
+				"storageProfile": {
+					"imageReference": {
+						"publisher": "MicrosoftWindowsServer",
+						"offer": "WindowsServer",
+						"sku": "2016-Datacenter",
+						"version": "latest"
+					},
+					"osDisk": {
+						"osType": "Windows",
+						"name": "[concat('virtualMachines_VNET_Lab1_VM_OsDisk_1_a79abaad23bc4388b3e19fbf61d077a6_',(parameters('alias'))]",
+						"createOption": "FromImage",
+						"caching": "ReadWrite",
+						"managedDisk": {
+							"storageAccountType": "Standard_LRS",
+							"id": "[resourceId('Microsoft.Compute/disks', concat('virtualMachines_VNET_Lab1_VM_OsDisk_1_a79abaad23bc4388b3e19fbf61d077a6_',(parameters('alias')))]"
+						},
+						"diskSizeGB": 127
+					},
+					"dataDisks": []
+				},
+				"osProfile": {
+					"computerName": "VNET-Lab1-VM-am",
+					"adminUsername": "roleadmin",
+					"windowsConfiguration": {
+						"provisionVMAgent": true,
+						"enableAutomaticUpdates": true
+					},
+					"secrets": [],
+					"allowExtensionOperations": true,
+					"requireGuestProvisionSignal": true
+				},
+				"networkProfile": {
+					"networkInterfaces": [
+						{
+							"id": "[resourceId('Microsoft.Network/networkInterfaces', concat('networkInterfaces_vnet_lab1_vm_name_',parameters('alias')))]"
+						}
+					]
+				}
+			}
+		},
+		{
+			"type": "Microsoft.Network/networkSecurityGroups/securityRules",
+			"apiVersion": "2020-05-01",
+			"name": "[concat('networkSecurityGroups_Azure_App_Service_Labs_VNET_NSG_CASG_name_',parameters('alias'), '/CASG-Rule-101')]",
+			"dependsOn": [
+				"[resourceId('Microsoft.Network/networkSecurityGroups', concat('networkSecurityGroups_Azure_App_Service_Labs_VNET_NSG_CASG_name_',parameters('alias')))]"
+			],
+			"properties": {
+				"description": "CSS Governance Security Rule.  Allow vnet inbound.  https://aka.ms/casg",
+				"protocol": "*",
+				"sourcePortRange": "*",
+				"destinationPortRange": "*",
+				"sourceAddressPrefix": "VirtualNetwork",
+				"destinationAddressPrefix": "*",
+				"access": "Allow",
+				"priority": 101,
+				"direction": "Inbound",
+				"sourcePortRanges": [],
+				"destinationPortRanges": [],
+				"sourceAddressPrefixes": [],
+				"destinationAddressPrefixes": []
+			}
+		},
+		{
+			"type": "Microsoft.Network/networkSecurityGroups/securityRules",
+			"apiVersion": "2020-05-01",
+			"name": "[concat('networkSecurityGroups_Azure_App_Service_Labs_VNET_NSG_CASG_name_',parameters('alias'), '/CASG-Rule-102')]",
+			"dependsOn": [
+				"[resourceId('Microsoft.Network/networkSecurityGroups', concat('networkSecurityGroups_Azure_App_Service_Labs_VNET_NSG_CASG_name_',parameters('alias')))]"
+			],
+			"properties": {
+				"description": "CSS Governance Security Rule.  Allow Corpnet inbound.  https://aka.ms/casg",
+				"protocol": "*",
+				"sourcePortRange": "*",
+				"destinationPortRange": "*",
+				"sourceAddressPrefix": "CorpNetPublic",
+				"destinationAddressPrefix": "*",
+				"access": "Allow",
+				"priority": 102,
+				"direction": "Inbound",
+				"sourcePortRanges": [],
+				"destinationPortRanges": [],
+				"sourceAddressPrefixes": [],
+				"destinationAddressPrefixes": []
+			}
+		},
+		{
+			"type": "Microsoft.Network/networkSecurityGroups/securityRules",
+			"apiVersion": "2020-05-01",
+			"name": "[concat('networkSecurityGroups_Azure_App_Service_Labs_VNET_NSG_CASG_name_',parameters('alias'), '/CASG-Rule-103')]",
+			"dependsOn": [
+				"[resourceId('Microsoft.Network/networkSecurityGroups', concat('networkSecurityGroups_Azure_App_Service_Labs_VNET_NSG_CASG_name_',parameters('alias')))]"
+			],
+			"properties": {
+				"description": "CSS Governance Security Rule.  Allow SAW inbound.  https://aka.ms/casg",
+				"protocol": "*",
+				"sourcePortRange": "*",
+				"destinationPortRange": "*",
+				"sourceAddressPrefix": "CorpNetSaw",
+				"destinationAddressPrefix": "*",
+				"access": "Allow",
+				"priority": 103,
+				"direction": "Inbound",
+				"sourcePortRanges": [],
+				"destinationPortRanges": [],
+				"sourceAddressPrefixes": [],
+				"destinationAddressPrefixes": []
+			}
+		},
+		{
+			"type": "Microsoft.Network/networkSecurityGroups/securityRules",
+			"apiVersion": "2020-05-01",
+			"name": "[concat('networkSecurityGroups_Azure_App_Service_Labs_VNET_NSG_CASG_name_',parameters('alias'), '/CASG-Rule-104')]",
+			"dependsOn": [
+				"[resourceId('Microsoft.Network/networkSecurityGroups', concat('networkSecurityGroups_Azure_App_Service_Labs_VNET_NSG_CASG_name_',parameters('alias')))]"
+			],
+			"properties": {
+				"description": "CSS Governance Security Rule.  Deny risky inbound.  https://aka.ms/casg",
+				"protocol": "*",
+				"sourcePortRange": "*",
+				"sourceAddressPrefix": "Internet",
+				"destinationAddressPrefix": "*",
+				"access": "Deny",
+				"priority": 104,
+				"direction": "Inbound",
+				"sourcePortRanges": [],
+				"destinationPortRanges": [
+					"13",
+					"17",
+					"19",
+					"22",
+					"23",
+					"53",
+					"69",
+					"111",
+					"119",
+					"123",
+					"135",
+					"137",
+					"138",
+					"139",
+					"161",
+					"162",
+					"389",
+					"445",
+					"512",
+					"514",
+					"593",
+					"636",
+					"873",
+					"1433",
+					"1434",
+					"1900",
+					"2049",
+					"2301",
+					"2381",
+					"3268",
+					"3306",
+					"3389",
+					"4333",
+					"5353",
+					"5432",
+					"5800",
+					"5900",
+					"5985",
+					"5986",
+					"6379",
+					"7000",
+					"7001",
+					"7199",
+					"9042",
+					"9160",
+					"9300",
+					"11211",
+					"16379",
+					"26379",
+					"27017"
+				],
+				"sourceAddressPrefixes": [],
+				"destinationAddressPrefixes": []
+			}
+		},
+		{
+			"type": "Microsoft.Network/virtualNetworks",
+			"apiVersion": "2020-05-01",
+			"name": "[concat('virtualNetworks_Azure_App_Service_Labs_VNET2_name_',parameters('alias'))]",
+			"location": "southeastasia",
+			"dependsOn": [
+				"[resourceId('Microsoft.Network/networkSecurityGroups', concat('networkSecurityGroups_Azure_App_Service_Labs_VNET2_NSG_CASG_name_',parameters('alias')))]"
+			],
+			"properties": {
+				"addressSpace": {
+					"addressPrefixes": [
+						"172.32.0.0/16"
+					]
+				},
+				"subnets": [
+					{
+						"name": "default",
+						"properties": {
+							"addressPrefix": "172.32.0.0/24",
+							"networkSecurityGroup": {
+								"id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat('networkSecurityGroups_Azure_App_Service_Labs_VNET2_NSG_CASG_name_',parameters('alias'))]"
+							},
+							"delegations": [],
+							"privateEndpointNetworkPolicies": "Enabled",
+							"privateLinkServiceNetworkPolicies": "Enabled"
+						}
+					}
+				],
+				"virtualNetworkPeerings": [],
+				"enableDdosProtection": false,
+				"enableVmProtection": false
+			}
+		},
+		{
+			"type": "Microsoft.Network/virtualNetworks",
+			"apiVersion": "2020-05-01",
+			"name": "[concat('virtualNetworks_Azure_App_Service_Labs_VNET_name_',parameters('alias'))]",
+			"location": "southeastasia",
+			"dependsOn": [
+				"[resourceId('Microsoft.Network/networkSecurityGroups', concat('networkSecurityGroups_Azure_App_Service_Labs_VNET_NSG_CASG_name_',parameters('alias')))]"
+			],
+			"properties": {
+				"addressSpace": {
+					"addressPrefixes": [
+						"10.1.0.0/16"
+					]
+				},
+				"subnets": [
+					{
+						"name": "default",
+						"properties": {
+							"addressPrefix": "10.1.0.0/24",
+							"networkSecurityGroup": {
+								"id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat('networkSecurityGroups_Azure_App_Service_Labs_VNET_NSG_CASG_name_',parameters('alias')))]"
+							},
+							"delegations": [],
+							"privateEndpointNetworkPolicies": "Enabled",
+							"privateLinkServiceNetworkPolicies": "Enabled"
+						}
+					},
+					{
+						"name": "webappsubnet",
+						"properties": {
+							"addressPrefix": "10.1.1.0/24",
+							"networkSecurityGroup": {
+								"id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat('networkSecurityGroups_Azure_App_Service_Labs_VNET_NSG_CASG_name_',parameters('alias')))]"
+							},
+							"delegations": [],
+							"privateEndpointNetworkPolicies": "Enabled",
+							"privateLinkServiceNetworkPolicies": "Enabled"
+						}
+					}
+				],
+				"virtualNetworkPeerings": [],
+				"enableDdosProtection": false,
+				"enableVmProtection": false
+			}
+		},
+		{
+			"type": "Microsoft.Web/sites",
+			"apiVersion": "2018-11-01",
+			"name": "[concat('sites_VNET_Lab1_Webapp_name_',parameters('alias'))]",
+			"location": "Southeast Asia",
+			"dependsOn": [
+				"[resourceId('Microsoft.Web/serverfarms', concat('serverfarms_VNET_Lab1_ASP_name_',parameters('alias')))]"
+			],
+			"kind": "app",
+			"properties": {
+				"enabled": true,
+				"hostNameSslStates": [
+					{
+						"name": "[concat('vnet-lab1-webapp-',parameters('alias'),'.azurewebsites.net')]",
+						"sslState": "Disabled",
+						"hostType": "Standard"
+					},
+					{
+						"name": "[concat('vnet-lab1-webapp-',parameters('alias'),'.scm.azurewebsites.net')]",
+						"sslState": "Disabled",
+						"hostType": "Repository"
+					}
+				],
+				"serverFarmId": "[resourceId('Microsoft.Web/serverfarms', concat('serverfarms_VNET_Lab1_ASP_name_',parameters('alias')))]",
+				"reserved": false,
+				"isXenon": false,
+				"hyperV": false,
+				"siteConfig": {},
+				"scmSiteAlsoStopped": false,
+				"clientAffinityEnabled": true,
+				"clientCertEnabled": false,
+				"hostNamesDisabled": false,
+				"containerSize": 0,
+				"dailyMemoryTimeQuota": 0,
+				"httpsOnly": false,
+				"redundancyMode": "None"
+			}
+		},
+		{
+			"type": "Microsoft.Web/sites/config",
+			"apiVersion": "2018-11-01",
+			"name": "[concat('sites_VNET_Lab1_Webapp_name_',parameters('alias'), '/web')]",
+			"location": "Southeast Asia",
+			"dependsOn": [
+				"[resourceId('Microsoft.Web/sites', concat('sites_VNET_Lab1_Webapp_name_',parameters('alias')))]"
+			],
+			"properties": {
+				"numberOfWorkers": 1,
+				"defaultDocuments": [
+					"Default.htm",
+					"Default.html",
+					"Default.asp",
+					"index.htm",
+					"index.html",
+					"iisstart.htm",
+					"default.aspx",
+					"index.php",
+					"hostingstart.html"
+				],
+				"netFrameworkVersion": "v4.0",
+				"requestTracingEnabled": false,
+				"remoteDebuggingEnabled": false,
+				"httpLoggingEnabled": false,
+				"logsDirectorySizeLimit": 35,
+				"detailedErrorLoggingEnabled": false,
+				"publishingUsername": "[concat('$VNET-Lab1-Webapp-',parameters('alias'))]",
+				"azureStorageAccounts": {},
+				"scmType": "None",
+				"use32BitWorkerProcess": true,
+				"webSocketsEnabled": false,
+				"alwaysOn": true,
+				"managedPipelineMode": "Integrated",
+				"virtualApplications": [
+					{
+						"virtualPath": "/",
+						"physicalPath": "site\\wwwroot",
+						"preloadEnabled": true
+					}
+				],
+				"loadBalancing": "LeastRequests",
+				"experiments": {
+					"rampUpRules": []
+				},
+				"autoHealEnabled": false,
+				"localMySqlEnabled": false,
+				"ipSecurityRestrictions": [
+					{
+						"ipAddress": "Any",
+						"action": "Allow",
+						"priority": 1,
+						"name": "Allow all",
+						"description": "Allow all access"
+					}
+				],
+				"scmIpSecurityRestrictions": [
+					{
+						"ipAddress": "Any",
+						"action": "Allow",
+						"priority": 1,
+						"name": "Allow all",
+						"description": "Allow all access"
+					}
+				],
+				"scmIpSecurityRestrictionsUseMain": false,
+				"http20Enabled": false,
+				"minTlsVersion": "1.2",
+				"ftpsState": "AllAllowed",
+				"reservedInstanceCount": 0
+			}
+		},
+		{
+			"type": "Microsoft.Web/sites/hostNameBindings",
+			"apiVersion": "2018-11-01",
+			"name": "[concat('sites_VNET_Lab1_Webapp_name_',parameters('alias'), '/', 'sites_VNET_Lab1_Webapp_name_',parameters('alias'), '.azurewebsites.net')]",
+			"location": "Southeast Asia",
+			"dependsOn": [
+				"[resourceId('Microsoft.Web/sites', concat('sites_VNET_Lab1_Webapp_name_',parameters('alias')))]"
+			],
+			"properties": {
+				"siteName": "[concat('VNET-Lab1-Webapp-',parameters('alias'))]",
+				"hostNameType": "Verified"
+			}
+		},
+		{
+			"type": "Microsoft.Network/networkInterfaces",
+			"apiVersion": "2020-05-01",
+			"name": "[concat('networkInterfaces_vnet_lab1_vm_name_',parameters('alias'))]",
+			"location": "southeastasia",
+			"dependsOn": [
+				"[resourceId('Microsoft.Network/publicIPAddresses', concat('publicIPAddresses_VNET_Lab1_VM_ip_name_',parameters('alias')))]",
+				"[resourceId('Microsoft.Network/virtualNetworks/subnets', concat('virtualNetworks_Azure_App_Service_Labs_VNET2_name_',parameters('alias')), 'default')]"
+			],
+			"properties": {
+				"ipConfigurations": [
+					{
+						"name": "ipconfig1",
+						"properties": {
+							"privateIPAddress": "172.32.0.4",
+							"privateIPAllocationMethod": "Dynamic",
+							"publicIPAddress": {
+								"id": "[resourceId('Microsoft.Network/publicIPAddresses', concat('publicIPAddresses_VNET_Lab1_VM_ip_name_',parameters('alias')))]"
+							},
+							"subnet": {
+								"id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', concat('virtualNetworks_Azure_App_Service_Labs_VNET2_name_',parameters('alias')), 'default')]"
+							},
+							"primary": true,
+							"privateIPAddressVersion": "IPv4"
+						}
+					}
+				],
+				"dnsSettings": {
+					"dnsServers": []
+				},
+				"enableAcceleratedNetworking": false,
+				"enableIPForwarding": false
+			}
+		},
+		{
+			"type": "Microsoft.Network/virtualNetworks/subnets",
+			"apiVersion": "2020-05-01",
+			"name": "[concat('virtualNetworks_Azure_App_Service_Labs_VNET2_name_',parameters('alias'), '/default')]",
+			"dependsOn": [
+				"[resourceId('Microsoft.Network/virtualNetworks', concat('virtualNetworks_Azure_App_Service_Labs_VNET2_name_',parameters('alias')))]",
+				"[resourceId('Microsoft.Network/networkSecurityGroups', concat('networkSecurityGroups_Azure_App_Service_Labs_VNET2_NSG_CASG_name_',parameters('alias')))]"
+			],
+			"properties": {
+				"addressPrefix": "172.32.0.0/24",
+				"networkSecurityGroup": {
+					"id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat('networkSecurityGroups_Azure_App_Service_Labs_VNET2_NSG_CASG_name_',parameters('alias')))]"
+				},
+				"delegations": [],
+				"privateEndpointNetworkPolicies": "Enabled",
+				"privateLinkServiceNetworkPolicies": "Enabled"
+			}
+		},
+		{
+			"type": "Microsoft.Network/virtualNetworks/subnets",
+			"apiVersion": "2020-05-01",
+			"name": "[concat('virtualNetworks_Azure_App_Service_Labs_VNET_name_',parameters('alias'), '/default')]",
+			"dependsOn": [
+				"[resourceId('Microsoft.Network/virtualNetworks', concat('virtualNetworks_Azure_App_Service_Labs_VNET_name_',parameters('alias')))]",
+				"[resourceId('Microsoft.Network/networkSecurityGroups', concat('networkSecurityGroups_Azure_App_Service_Labs_VNET_NSG_CASG_name_',parameters('alias')))]"
+			],
+			"properties": {
+				"addressPrefix": "10.1.0.0/24",
+				"networkSecurityGroup": {
+					"id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat('networkSecurityGroups_Azure_App_Service_Labs_VNET_NSG_CASG_name_',parameters('alias')))]"
+				},
+				"delegations": [],
+				"privateEndpointNetworkPolicies": "Enabled",
+				"privateLinkServiceNetworkPolicies": "Enabled"
+			}
+		},
+		{
+			"type": "Microsoft.Network/virtualNetworks/subnets",
+			"apiVersion": "2020-05-01",
+			"name": "[concat('virtualNetworks_Azure_App_Service_Labs_VNET_name_',parameters('alias'), '/webappsubnet')]",
+			"dependsOn": [
+				"[resourceId('Microsoft.Network/virtualNetworks', concat('virtualNetworks_Azure_App_Service_Labs_VNET_name_',parameters('alias')))]",
+				"[resourceId('Microsoft.Network/networkSecurityGroups', concat('networkSecurityGroups_Azure_App_Service_Labs_VNET_NSG_CASG_name_',parameters('alias')))]"
+			],
+			"properties": {
+				"addressPrefix": "10.1.1.0/24",
+				"networkSecurityGroup": {
+					"id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat('networkSecurityGroups_Azure_App_Service_Labs_VNET_NSG_CASG_name_',parameters('alias')))]"
+				},
+				"delegations": [],
+				"privateEndpointNetworkPolicies": "Enabled",
+				"privateLinkServiceNetworkPolicies": "Enabled"
+			}
+		}
+	]
+}
