@@ -17,7 +17,7 @@ Your goal is to ensure that the App Service "" is able to reach the VM "".
 3.	Click on "Deploy". <br>
 
 ## Deployment Link:
-<a href="https://raw.githubusercontent.com/vijaysaayi/Azure-App-Service-Labs/main/Config/VNet%20Integration/Gateway%20Required/template.json" target="_blank">
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fvijaysaayi%2FAzure-App-Service-Labs%2Fmain%2FConfig%2FVNet%2520Integration%2FGateway%2520Required%2Ftemplate.json" target="_blank">
     <img src="https://azurecomcdn.azureedge.net/mediahandler/acomblog/media/Default/blog/deploybutton.png"/>
 </a> 
 
