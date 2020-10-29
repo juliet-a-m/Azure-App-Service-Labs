@@ -5,7 +5,7 @@ This is the first Level 200 lab for Azure App Service Gateway required VNet Inte
 ## Scenario:
 In this lab, you will need to you are unable to Gateway required perform VNet Integration.
 When it is working and when we tcpping from Kudu Console to private IP of VM, you see the following response
-- Connected to <private IP of VM>:443, time taken: <time in ms>
+- Connected to **private IP of VM:443** , time taken: <time in ms>
 
 ## Goal:
 Your goal is to ensure that the App Service "<>" is able to reach the VM "<>". 
