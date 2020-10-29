@@ -17,7 +17,7 @@ Your goal is to ensure that the App Service "<>" is able to reach the VM "<>".
 3.	Click on "Deploy". <br>
 
 ## :warning: **Important !!**<br>
-> The resources deployed to your subscription would be chargeable. Hence ensure that yoy delete the resources upon completion of the lab.<br>
+> The resources deployed to your subscription would be **chargeable**. Hence ensure that you **delete the resources upon completion** of the lab.<br>
 > The screenshot of the **deletion** of Resource Group used by the lab along with you **email address (in screenshot)** should be attached along with you email 
 
 ## Deployment Link:
