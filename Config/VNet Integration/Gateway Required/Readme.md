@@ -16,8 +16,8 @@ Your goal is to ensure that the App Service "<>" is able to reach the VM "<>".
 2.	Choose your subscription, create a new resource group, enter your Name/alias and click on "Validate" button. <br>
 3.	Click on "Deploy". <br>
 
-> Important Note :
-> The resources deployed to your subscription would be chargeable. Hence ensure that yoy delete the resources upon completion of the lab.
+## :warning: **Important !!**<br>
+> The resources deployed to your subscription would be chargeable. Hence ensure that yoy delete the resources upon completion of the lab.<br>
 > The screenshot of the **deletion** of Resource Group used by the lab along with you **email address (in screenshot)** should be attached along with you email 
 
 ## Deployment Link:
