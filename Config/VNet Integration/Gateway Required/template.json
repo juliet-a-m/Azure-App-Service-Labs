@@ -1,0 +1,582 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "nameOrAlias": {
+            "defaultValue": "Enter your Name/Alias",
+            "type": "string"
+        }
+    },
+    "variables": {
+        "sites_AS_N_GWRI_webapp_lab_001_name": "[concat('AS-N-GWRI-webapp-lab-001','-',parameters('nameOrAlias'))]",
+        "serverfarms_AS_N_GWRI_asp_lab_001_name": "[concat('AS-N-GWRI-asp-lab-001','-',parameters('nameOrAlias'))]",
+        "publicIPAddresses_AS_N_GWRI_PublicIP_lab_001_name": "[concat('AS-N-GWRI-PublicIP-lab-001','-',parameters('nameOrAlias'))]",
+        "virtualNetworkGateways_AS_N_GWRI_Gateway_lab_001_name": "[concat('AS-N-GWRI-Gateway-lab-001','-',parameters('nameOrAlias'))]",
+        "virtualNetworks_AS_N_GWRI_VirtualNetwork_lab_001_name":  "[concat('AS-N-GWRI-VirtualNetwork-lab-001','-',parameters('nameOrAlias'))]",
+        "networkSecurityGroups_AS_N_GWRI_VirtualNetwork_lab_001_NSG_CASG_name": "[concat('AS-N-GWRI-VirtualNetwork-lab-001-NSG-CASG','-',parameters('nameOrAlias'))]"
+    },
+    "resources": [
+       
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2020-05-01",
+            "name": "[variables('networkSecurityGroups_AS_N_GWRI_VirtualNetwork_lab_001_NSG_CASG_name')]",
+            "location": "centralus",
+            "tags": {
+                "Creator": "Automatically added by CASG Azure Policy",
+                "CASG-Info": "http://aka.ms/cssbaselinesecurity"
+            },
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "CASG-Rule-103",
+                        "properties": {
+                            "description": "CSS Governance Security Rule.  Allow SAW inbound.  https://aka.ms/casg",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "CorpNetSaw",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 103,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "CASG-Rule-104",
+                        "properties": {
+                            "description": "CSS Governance Security Rule.  Deny risky inbound.  https://aka.ms/casg",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "sourceAddressPrefix": "Internet",
+                            "destinationAddressPrefix": "*",
+                            "access": "Deny",
+                            "priority": 104,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [
+                                "13",
+                                "17",
+                                "19",
+                                "22",
+                                "23",
+                                "53",
+                                "69",
+                                "111",
+                                "119",
+                                "123",
+                                "135",
+                                "137",
+                                "138",
+                                "139",
+                                "161",
+                                "162",
+                                "389",
+                                "445",
+                                "512",
+                                "514",
+                                "593",
+                                "636",
+                                "873",
+                                "1433",
+                                "1434",
+                                "1900",
+                                "2049",
+                                "2301",
+                                "2381",
+                                "3268",
+                                "3306",
+                                "3389",
+                                "4333",
+                                "5353",
+                                "5432",
+                                "5800",
+                                "5900",
+                                "5985",
+                                "5986",
+                                "6379",
+                                "7000",
+                                "7001",
+                                "7199",
+                                "9042",
+                                "9160",
+                                "9300",
+                                "11211",
+                                "16379",
+                                "26379",
+                                "27017"
+                            ],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "CASG-Rule-102",
+                        "properties": {
+                            "description": "CSS Governance Security Rule.  Allow Corpnet inbound.  https://aka.ms/casg",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "CorpNetPublic",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 102,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "CASG-Rule-101",
+                        "properties": {
+                            "description": "CSS Governance Security Rule.  Allow vnet inbound.  https://aka.ms/casg",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "VirtualNetwork",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 101,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2020-05-01",
+            "name": "[variables('publicIPAddresses_AS_N_GWRI_PublicIP_lab_001_name')]",
+            "location": "centralus",
+            "sku": {
+                "name": "Basic"
+            },
+            "properties": {
+                "publicIPAddressVersion": "IPv4",
+                "publicIPAllocationMethod": "Dynamic",
+                "idleTimeoutInMinutes": 4,
+                "ipTags": []
+            }
+        },
+        {
+            "type": "Microsoft.Web/serverfarms",
+            "apiVersion": "2018-02-01",
+            "name": "[variables('serverfarms_AS_N_GWRI_asp_lab_001_name')]",
+            "location": "South India",
+            "sku": {
+                "name": "S1",
+                "tier": "Standard",
+                "size": "S1",
+                "family": "S",
+                "capacity": 1
+            },
+            "kind": "app",
+            "properties": {
+                "perSiteScaling": false,
+                "maximumElasticWorkerCount": 1,
+                "isSpot": false,
+                "reserved": false,
+                "isXenon": false,
+                "hyperV": false,
+                "targetWorkerCount": 0,
+                "targetWorkerSizeId": 0
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+            "apiVersion": "2020-05-01",
+            "name": "[concat(variables('networkSecurityGroups_AS_N_GWRI_VirtualNetwork_lab_001_NSG_CASG_name'), '/CASG-Rule-101')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroups_AS_N_GWRI_VirtualNetwork_lab_001_NSG_CASG_name'))]"
+            ],
+            "properties": {
+                "description": "CSS Governance Security Rule.  Allow vnet inbound.  https://aka.ms/casg",
+                "protocol": "*",
+                "sourcePortRange": "*",
+                "destinationPortRange": "*",
+                "sourceAddressPrefix": "VirtualNetwork",
+                "destinationAddressPrefix": "*",
+                "access": "Allow",
+                "priority": 101,
+                "direction": "Inbound",
+                "sourcePortRanges": [],
+                "destinationPortRanges": [],
+                "sourceAddressPrefixes": [],
+                "destinationAddressPrefixes": []
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+            "apiVersion": "2020-05-01",
+            "name": "[concat(variables('networkSecurityGroups_AS_N_GWRI_VirtualNetwork_lab_001_NSG_CASG_name'), '/CASG-Rule-102')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroups_AS_N_GWRI_VirtualNetwork_lab_001_NSG_CASG_name'))]"
+            ],
+            "properties": {
+                "description": "CSS Governance Security Rule.  Allow Corpnet inbound.  https://aka.ms/casg",
+                "protocol": "*",
+                "sourcePortRange": "*",
+                "destinationPortRange": "*",
+                "sourceAddressPrefix": "CorpNetPublic",
+                "destinationAddressPrefix": "*",
+                "access": "Allow",
+                "priority": 102,
+                "direction": "Inbound",
+                "sourcePortRanges": [],
+                "destinationPortRanges": [],
+                "sourceAddressPrefixes": [],
+                "destinationAddressPrefixes": []
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+            "apiVersion": "2020-05-01",
+            "name": "[concat(variables('networkSecurityGroups_AS_N_GWRI_VirtualNetwork_lab_001_NSG_CASG_name'), '/CASG-Rule-103')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroups_AS_N_GWRI_VirtualNetwork_lab_001_NSG_CASG_name'))]"
+            ],
+            "properties": {
+                "description": "CSS Governance Security Rule.  Allow SAW inbound.  https://aka.ms/casg",
+                "protocol": "*",
+                "sourcePortRange": "*",
+                "destinationPortRange": "*",
+                "sourceAddressPrefix": "CorpNetSaw",
+                "destinationAddressPrefix": "*",
+                "access": "Allow",
+                "priority": 103,
+                "direction": "Inbound",
+                "sourcePortRanges": [],
+                "destinationPortRanges": [],
+                "sourceAddressPrefixes": [],
+                "destinationAddressPrefixes": []
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+            "apiVersion": "2020-05-01",
+            "name": "[concat(variables('networkSecurityGroups_AS_N_GWRI_VirtualNetwork_lab_001_NSG_CASG_name'), '/CASG-Rule-104')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroups_AS_N_GWRI_VirtualNetwork_lab_001_NSG_CASG_name'))]"
+            ],
+            "properties": {
+                "description": "CSS Governance Security Rule.  Deny risky inbound.  https://aka.ms/casg",
+                "protocol": "*",
+                "sourcePortRange": "*",
+                "sourceAddressPrefix": "Internet",
+                "destinationAddressPrefix": "*",
+                "access": "Deny",
+                "priority": 104,
+                "direction": "Inbound",
+                "sourcePortRanges": [],
+                "destinationPortRanges": [
+                    "13",
+                    "17",
+                    "19",
+                    "22",
+                    "23",
+                    "53",
+                    "69",
+                    "111",
+                    "119",
+                    "123",
+                    "135",
+                    "137",
+                    "138",
+                    "139",
+                    "161",
+                    "162",
+                    "389",
+                    "445",
+                    "512",
+                    "514",
+                    "593",
+                    "636",
+                    "873",
+                    "1433",
+                    "1434",
+                    "1900",
+                    "2049",
+                    "2301",
+                    "2381",
+                    "3268",
+                    "3306",
+                    "3389",
+                    "4333",
+                    "5353",
+                    "5432",
+                    "5800",
+                    "5900",
+                    "5985",
+                    "5986",
+                    "6379",
+                    "7000",
+                    "7001",
+                    "7199",
+                    "9042",
+                    "9160",
+                    "9300",
+                    "11211",
+                    "16379",
+                    "26379",
+                    "27017"
+                ],
+                "sourceAddressPrefixes": [],
+                "destinationAddressPrefixes": []
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2020-05-01",
+            "name": "[variables('virtualNetworks_AS_N_GWRI_VirtualNetwork_lab_001_name')]",
+            "location": "centralus",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroups_AS_N_GWRI_VirtualNetwork_lab_001_NSG_CASG_name'))]"
+            ],
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "10.0.0.0/16"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "GatewaySubnet",
+                        "properties": {
+                            "addressPrefix": "10.0.1.0/24",
+                            "delegations": [],
+                            "privateEndpointNetworkPolicies": "Enabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        }
+                    },
+                    {
+                        "name": "VirtualMachineSubnet",
+                        "properties": {
+                            "addressPrefix": "10.0.0.0/27",
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroups_AS_N_GWRI_VirtualNetwork_lab_001_NSG_CASG_name'))]"
+                            },
+                            "delegations": [],
+                            "privateEndpointNetworkPolicies": "Enabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        }
+                    }
+                ],
+                "virtualNetworkPeerings": [],
+                "enableDdosProtection": false,
+                "enableVmProtection": false
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "apiVersion": "2020-05-01",
+            "name": "[concat(variables('virtualNetworks_AS_N_GWRI_VirtualNetwork_lab_001_name'), '/GatewaySubnet')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworks_AS_N_GWRI_VirtualNetwork_lab_001_name'))]"
+            ],
+            "properties": {
+                "addressPrefix": "10.0.1.0/24",
+                "delegations": [],
+                "privateEndpointNetworkPolicies": "Enabled",
+                "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2018-11-01",
+            "name": "[variables('sites_AS_N_GWRI_webapp_lab_001_name')]",
+            "location": "South India",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', variables('serverfarms_AS_N_GWRI_asp_lab_001_name'))]"
+            ],
+            "kind": "app",
+            "properties": {
+                "enabled": true,
+                "hostNameSslStates": [
+                    {
+                        "name": "[concat(variables('sites_AS_N_GWRI_webapp_lab_001_name'),'.azurewebsites.net')]",
+                        "sslState": "Disabled",
+                        "hostType": "Standard"
+                    },
+                    {
+                        "name": "[concat(variables('sites_AS_N_GWRI_webapp_lab_001_name'),'.scm.azurewebsites.net')]",
+                        "sslState": "Disabled",
+                        "hostType": "Repository"
+                    }
+                ],
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('serverfarms_AS_N_GWRI_asp_lab_001_name'))]",
+                "reserved": false,
+                "isXenon": false,
+                "hyperV": false,
+                "siteConfig": {},
+                "scmSiteAlsoStopped": false,
+                "clientAffinityEnabled": true,
+                "clientCertEnabled": false,
+                "hostNamesDisabled": false,
+                "containerSize": 0,
+                "dailyMemoryTimeQuota": 0,
+                "httpsOnly": false,
+                "redundancyMode": "None"
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/config",
+            "apiVersion": "2018-11-01",
+            "name": "[concat(variables('sites_AS_N_GWRI_webapp_lab_001_name'), '/web')]",
+            "location": "South India",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', variables('sites_AS_N_GWRI_webapp_lab_001_name'))]"
+            ],
+            "properties": {
+                "numberOfWorkers": 1,
+                "defaultDocuments": [
+                    "Default.htm",
+                    "Default.html",
+                    "Default.asp",
+                    "index.htm",
+                    "index.html",
+                    "iisstart.htm",
+                    "default.aspx",
+                    "index.php",
+                    "hostingstart.html"
+                ],
+                "netFrameworkVersion": "v4.0",
+                "requestTracingEnabled": false,
+                "remoteDebuggingEnabled": false,
+                "httpLoggingEnabled": false,
+                "logsDirectorySizeLimit": 35,
+                "detailedErrorLoggingEnabled": false,
+                "publishingUsername": "[concat('$', variables('sites_AS_N_GWRI_webapp_lab_001_name'))]",
+                "azureStorageAccounts": {},
+                "scmType": "None",
+                "use32BitWorkerProcess": true,
+                "webSocketsEnabled": false,
+                "alwaysOn": true,
+                "managedPipelineMode": "Integrated",
+                "virtualApplications": [
+                    {
+                        "virtualPath": "/",
+                        "physicalPath": "site\\wwwroot",
+                        "preloadEnabled": true
+                    }
+                ],
+                "loadBalancing": "LeastRequests",
+                "experiments": {
+                    "rampUpRules": []
+                },
+                "autoHealEnabled": false,
+                "localMySqlEnabled": false,
+                "ipSecurityRestrictions": [
+                    {
+                        "ipAddress": "Any",
+                        "action": "Allow",
+                        "priority": 1,
+                        "name": "Allow all",
+                        "description": "Allow all access"
+                    }
+                ],
+                "scmIpSecurityRestrictions": [
+                    {
+                        "ipAddress": "Any",
+                        "action": "Allow",
+                        "priority": 1,
+                        "name": "Allow all",
+                        "description": "Allow all access"
+                    }
+                ],
+                "scmIpSecurityRestrictionsUseMain": false,
+                "http20Enabled": false,
+                "minTlsVersion": "1.2",
+                "ftpsState": "AllAllowed",
+                "reservedInstanceCount": 0
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/hostNameBindings",
+            "apiVersion": "2018-11-01",
+            "name": "[concat(variables('sites_AS_N_GWRI_webapp_lab_001_name'), '/', variables('sites_AS_N_GWRI_webapp_lab_001_name'), '.azurewebsites.net')]",
+            "location": "South India",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', variables('sites_AS_N_GWRI_webapp_lab_001_name'))]"
+            ],
+            "properties": {
+                "siteName": "[variables('sites_AS_N_GWRI_webapp_lab_001_name')]",
+                "hostNameType": "Verified"
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworkGateways",
+            "apiVersion": "2020-05-01",
+            "name": "[variables('virtualNetworkGateways_AS_N_GWRI_Gateway_lab_001_name')]",
+            "location": "centralus",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddresses_AS_N_GWRI_PublicIP_lab_001_name'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworks_AS_N_GWRI_VirtualNetwork_lab_001_name'), 'GatewaySubnet')]"
+            ],
+            "properties": {
+                "enablePrivateIpAddress": false,
+                "ipConfigurations": [
+                    {
+                        "name": "default",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddresses_AS_N_GWRI_PublicIP_lab_001_name'))]"
+                            },
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworks_AS_N_GWRI_VirtualNetwork_lab_001_name'), 'GatewaySubnet')]"
+                            }
+                        }
+                    }
+                ],
+                "sku": {
+                    "name": "VpnGw1",
+                    "tier": "VpnGw1"
+                },
+                "gatewayType": "Vpn",
+                "vpnType": "RouteBased",
+                "enableBgp": false,
+                "activeActive": false,
+                "bgpSettings": {
+                    "asn": 65515,
+                    "bgpPeeringAddress": "10.0.1.254",
+                    "peerWeight": 0,
+                    "bgpPeeringAddresses": [
+                        {
+                            "ipconfigurationId": "[concat(resourceId('Microsoft.Network/virtualNetworkGateways', variables('virtualNetworkGateways_AS_N_GWRI_Gateway_lab_001_name')), '/ipConfigurations/default')]",
+                            "customBgpIpAddresses": []
+                        }
+                    ]
+                },
+                "vpnGatewayGeneration": "Generation1"
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "apiVersion": "2020-05-01",
+            "name": "[concat(variables('virtualNetworks_AS_N_GWRI_VirtualNetwork_lab_001_name'), '/VirtualMachineSubnet')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworks_AS_N_GWRI_VirtualNetwork_lab_001_name'))]",
+                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroups_AS_N_GWRI_VirtualNetwork_lab_001_NSG_CASG_name'))]"
+            ],
+            "properties": {
+                "addressPrefix": "10.0.0.0/27",
+                "networkSecurityGroup": {
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroups_AS_N_GWRI_VirtualNetwork_lab_001_NSG_CASG_name'))]"
+                },
+                "delegations": [],
+                "privateEndpointNetworkPolicies": "Enabled",
+                "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+        }
+    ]
+}
