@@ -17,7 +17,7 @@ Your goal is to ensure that the App Service "" is able to reach the VM "".
 3.	Click on "Deploy". <br>
 
 ## Deployment Link:
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fvijaysaayi%2FAzure-App-Service-Labs%2Fmain%2FConfig%2FVNet%2520Integration%2FRegional%2FLab%2520001%2520-%2520App%2520Service%2520is%2520unable%2520to%2520reach%2520VNet%2520resources%2Fazuredeploy.json" target="_blank">
+<a href="https%3A%2F%2Fraw.githubusercontent.com%2Fvijaysaayi%2FAzure-App-Service-Labs%2Fmain%2FConfig%2FVNet%2520Integration%2FRegional%2FLab%2520001%2520-%2520App%2520Service%2520is%2520unable%2520to%2520reach%2520VNet%2520resources%2Ftemplate.json" target="_blank">
     <img src="https://azurecomcdn.azureedge.net/mediahandler/acomblog/media/Default/blog/deploybutton.png"/>
 </a> 
 
