@@ -3,12 +3,16 @@
 This is the first Level 200 lab for Azure App Service Gateway required VNet Integration.
 
 ## Scenario:
-In this lab, you will need to you are unable to Gateway required perform VNet Integration.
-When it is working and when we tcpping from Kudu Console to private IP of VM, you see the following response
-- Connected to **private IP of VM:443** , time taken: <time in ms>
+Unable to perform Gateway Required VNet Integration for the App Service **"AS-N-GWRI-webapp-lab-001-{alias}"**
+
+## Error Message:
+![Error](https://github.com/vijaysaayi/Azure-App-Service-Labs/blob/main/Config/VNet%20Integration/Gateway%20Required/Lab%20001%20-%20Unable%20to%20perform%20intergration/Error.png)
+
 
 ## Goal:
-Your goal is to ensure that the App Service "<>" is able to reach the VM "<>". 
+Your goal is to ensure that the App Service **"AS-N-GWRI-webapp-lab-001-{alias}"** is able to reach the VM **"AS-N-GWRI-VM-lab-001-{alias}"**. 
+When it is working and when we tcpping from Kudu Console to private IP of VM, you see the following response
+- Connected to **private IP of VM:443** , time taken: <time in ms>
 
 ## Deployment Instructions :
 1.	Click on the “Deploy to Azure” button. 
@@ -32,6 +36,7 @@ Your goal is to ensure that the App Service "<>" is able to reach the VM "<>".
 - **Virtual Network**  : AS-N-GWRI-VirtualNetwork-lab-001-{alias}
 - **Virtual Network Gateway** : AS-N-GWRI-Gateway-lab-001-{alias}
 - **Public IP**        : AS-N-GWRI-PublicIP-lab-001-{alias}
+- **Virtual Machine**  : AS-N-GWRI-VM-lab-001-{alias}
    
 
 
