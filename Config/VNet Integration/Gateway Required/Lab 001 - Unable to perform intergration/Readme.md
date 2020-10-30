@@ -15,10 +15,10 @@ When it is working and when we tcpping from Kudu Console to private IP of VM, yo
 - Connected to **private IP of VM:443** , time taken: <time in ms>
 
 ## Deployment Instructions :
-1.	Click on the “Deploy to Azure” button. 
+1.	Click on the **“Deploy to Azure”** button. 
    This will open Custom template deployment page in Azure Portal. <br>
-2.	Choose your subscription, create a new resource group, enter your Name/alias and click on "Validate" button. <br>
-3.	Click on "Deploy". <br>
+2.	Choose your subscription, create a new resource group, enter your Name/alias. <br>
+3.	Click on **"Review and Create"**. <br>
 
 ## :warning: **Important !!**<br>
 > The resources deployed to your subscription would be **chargeable**. Hence ensure that you **delete the resources upon completion** of the lab.<br>
@@ -35,9 +35,13 @@ When it is working and when we tcpping from Kudu Console to private IP of VM, yo
 - **App Service Plan** : AS-N-GWRI-asp-lab-001-{alias}
 - **Virtual Network**  : AS-N-GWRI-VirtualNetwork-lab-001-{alias}
 - **Virtual Network Gateway** : AS-N-GWRI-Gateway-lab-001-{alias}
-- **Public IP**        : AS-N-GWRI-PublicIP-lab-001-{alias}
 - **Virtual Machine**  : AS-N-GWRI-VM-lab-001-{alias}
-   
+- **Network Interface** : as-n-gwri-vm-lab-001688-{alias}
+- **Public IP for VM** : AS-N-GWRI-VM-lab-001-ip-{alias}
+- **Public IP for GW** : AS-N-GWRI-PublicIP-lab-001-{alias}
+- **Network Security Group** : AS-N-GWRI-VirtualNetwork-lab-001-NSG-CASG-{alias} 
+
+
 
 
 

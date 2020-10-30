@@ -3,20 +3,21 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "nameOrAlias": {
-            "defaultValue": "Enter your Name/Alias",
             "type": "string"
         }
     },
     "variables": {
         "sites_AS_N_GWRI_webapp_lab_001_name": "[concat('AS-N-GWRI-webapp-lab-001','-',parameters('nameOrAlias'))]",
         "serverfarms_AS_N_GWRI_asp_lab_001_name": "[concat('AS-N-GWRI-asp-lab-001','-',parameters('nameOrAlias'))]",
-        "publicIPAddresses_AS_N_GWRI_PublicIP_lab_001_name": "[concat('AS-N-GWRI-PublicIP-lab-001','-',parameters('nameOrAlias'))]",
+        "virtualMachines_AS_N_GWRI_VM_lab_001_name": "[concat('AS-N-GWRI-VM-lab-001','-',parameters('nameOrAlias'))]",
+        "networkInterfaces_as_n_gwri_vm_lab_001688_name": "[concat('as-n-gwri-vm-lab-001688','-',parameters('nameOrAlias'))]",
+        "publicIPAddresses_AS_N_GWRI_VM_lab_001_ip_name": "[concat('AS-N-GWRI-VM-lab-001-ip','-',parameters('nameOrAlias'))]",
+        "publicIPAddresses_AS_N_GWRI_PublicIP_lab_001_name": "[concat('AS-N-GWRI-PublicIP-lab-001','-',parameters('nameOrAlias'))]",        
         "virtualNetworkGateways_AS_N_GWRI_Gateway_lab_001_name": "[concat('AS-N-GWRI-Gateway-lab-001','-',parameters('nameOrAlias'))]",
-        "virtualNetworks_AS_N_GWRI_VirtualNetwork_lab_001_name":  "[concat('AS-N-GWRI-VirtualNetwork-lab-001','-',parameters('nameOrAlias'))]",
-        "networkSecurityGroups_AS_N_GWRI_VirtualNetwork_lab_001_NSG_CASG_name": "[concat('AS-N-GWRI-VirtualNetwork-lab-001-NSG-CASG','-',parameters('nameOrAlias'))]"
+        "virtualNetworks_AS_N_GWRI_VirtualNetwork_lab_001_name": "[concat('AS-N-GWRI-VirtualNetwork-lab-001','-',parameters('nameOrAlias'))]",
+        "networkSecurityGroups_AS_N_GWRI_VirtualNetwork_lab_001_NSG_CASG_name": "[concat('AS-N-GWRI-VirtualNetwork-lab-001-NSG-CASG','-',parameters('nameOrAlias'))]"        
     },
     "resources": [
-       
         {
             "type": "Microsoft.Network/networkSecurityGroups",
             "apiVersion": "2020-05-01",
@@ -162,8 +163,28 @@
                 "name": "Basic"
             },
             "properties": {
+                "ipAddress": "13.67.130.126",
                 "publicIPAddressVersion": "IPv4",
                 "publicIPAllocationMethod": "Dynamic",
+                "idleTimeoutInMinutes": 4,
+                "ipTags": []
+            }
+        },
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2020-05-01",
+            "name": "[variables('publicIPAddresses_AS_N_GWRI_VM_lab_001_ip_name')]",
+            "location": "centralus",
+            "sku": {
+                "name": "Standard"
+            },
+            "zones": [
+                "1"
+            ],
+            "properties": {
+                "ipAddress": "40.67.178.14",
+                "publicIPAddressVersion": "IPv4",
+                "publicIPAllocationMethod": "Static",
                 "idleTimeoutInMinutes": 4,
                 "ipTags": []
             }
@@ -190,6 +211,61 @@
                 "hyperV": false,
                 "targetWorkerCount": 0,
                 "targetWorkerSizeId": 0
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2019-07-01",
+            "name": "[variables('virtualMachines_AS_N_GWRI_VM_lab_001_name')]",
+            "location": "centralus",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkInterfaces', variables('networkInterfaces_as_n_gwri_vm_lab_001688_name'))]"
+            ],
+            "zones": [
+                "1"
+            ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "Standard_DS1_v2"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "MicrosoftWindowsDesktop",
+                        "offer": "Windows-10",
+                        "sku": "rs5-pro",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "osType": "Windows",
+                        "name": "[concat(variables('virtualMachines_AS_N_GWRI_VM_lab_001_name'), '_OsDisk_1_2a83f95b0e7445a3b1cd2424c418001c')]",
+                        "createOption": "FromImage",
+                        "caching": "ReadWrite",
+                        "managedDisk": {
+                            "storageAccountType": "Standard_LRS"                            
+                        },
+                        "diskSizeGB": 127
+                    },
+                    "dataDisks": []
+                },
+                "osProfile": {
+                    "computerName": "AS-N-GWRI-VM-la",
+                    "adminUsername": "roleAdmin",
+                    "adminPassword": "App$ervicesi$g8",
+                    "windowsConfiguration": {
+                        "provisionVMAgent": true,
+                        "enableAutomaticUpdates": true
+                    },
+                    "secrets": [],
+                    "allowExtensionOperations": true
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('networkInterfaces_as_n_gwri_vm_lab_001688_name'))]"
+                        }
+                    ]
+                },
+                "licenseType": "Windows_Client"
             }
         },
         {
@@ -403,12 +479,12 @@
                 "enabled": true,
                 "hostNameSslStates": [
                     {
-                        "name": "[concat(variables('sites_AS_N_GWRI_webapp_lab_001_name'),'.azurewebsites.net')]",
+                        "name": "[concat(variables('sites_AS_N_GWRI_webapp_lab_001_name'),'-','.azurewebsites.net')]",
                         "sslState": "Disabled",
                         "hostType": "Standard"
                     },
                     {
-                        "name": "[concat(variables('sites_AS_N_GWRI_webapp_lab_001_name'),'.scm.azurewebsites.net')]",
+                        "name": "[concat(variables('sites_AS_N_GWRI_webapp_lab_001_name'),'-','.scm.azurewebsites.net')]",
                         "sslState": "Disabled",
                         "hostType": "Repository"
                     }
@@ -452,21 +528,22 @@
                 "netFrameworkVersion": "v4.0",
                 "requestTracingEnabled": false,
                 "remoteDebuggingEnabled": false,
+                "remoteDebuggingVersion": "VS2019",
                 "httpLoggingEnabled": false,
                 "logsDirectorySizeLimit": 35,
                 "detailedErrorLoggingEnabled": false,
-                "publishingUsername": "[concat('$', variables('sites_AS_N_GWRI_webapp_lab_001_name'))]",
+                "publishingUsername": "[concat('$',variables('sites_AS_N_GWRI_webapp_lab_001_name'))]",
                 "azureStorageAccounts": {},
                 "scmType": "None",
                 "use32BitWorkerProcess": true,
                 "webSocketsEnabled": false,
-                "alwaysOn": true,
+                "alwaysOn": false,
                 "managedPipelineMode": "Integrated",
                 "virtualApplications": [
                     {
                         "virtualPath": "/",
                         "physicalPath": "site\\wwwroot",
-                        "preloadEnabled": true
+                        "preloadEnabled": false
                     }
                 ],
                 "loadBalancing": "LeastRequests",
@@ -511,6 +588,40 @@
             "properties": {
                 "siteName": "[variables('sites_AS_N_GWRI_webapp_lab_001_name')]",
                 "hostNameType": "Verified"
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2020-05-01",
+            "name": "[variables('networkInterfaces_as_n_gwri_vm_lab_001688_name')]",
+            "location": "centralus",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddresses_AS_N_GWRI_VM_lab_001_ip_name'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworks_AS_N_GWRI_VirtualNetwork_lab_001_name'), 'VirtualMachineSubnet')]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAddress": "10.0.0.4",
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddresses_AS_N_GWRI_VM_lab_001_ip_name'))]"
+                            },
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworks_AS_N_GWRI_VirtualNetwork_lab_001_name'), 'VirtualMachineSubnet')]"
+                            },
+                            "primary": true,
+                            "privateIPAddressVersion": "IPv4"
+                        }
+                    }
+                ],
+                "dnsSettings": {
+                    "dnsServers": []
+                },
+                "enableAcceleratedNetworking": false,
+                "enableIPForwarding": false
             }
         },
         {
