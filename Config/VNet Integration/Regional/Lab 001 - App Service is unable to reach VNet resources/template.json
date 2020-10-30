@@ -1,0 +1,313 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "alias": {
+            "type": "string"
+        },
+        "virtualNetworks_Vnet_Lab2_Vnet1_name": {
+            "defaultValue": "[concat('AS-N-RegInt-VirtualNetwork1-lab-001-',parameters('alias'))]",
+            "type": "string"
+        },
+        "virtualNetworks_Vnet_Lab2_Vnet2_name": {
+            "defaultValue": "[concat('AS-N-RegInt-VirtualNetwork2-lab-001-',parameters('alias'))]",
+            "type": "string"
+        },
+        "Vnet-Lab2-VMName": {
+            "type": "string",
+            "defaultValue": "[concat('AS-N-RegInt-VirtualMachine-lab-001-',parameters('alias'))]",
+            "minLength": 1
+        },
+        "Vnet-Lab2-VMAdminUserName": {
+            "type": "string",
+            "defaultValue": "roleadmin",
+            "minLength": 1
+        },
+        "Vnet-Lab2-VMAdminPassword": {
+            "defaultValue": "App$ervicesi$g8",
+            "type": "securestring"
+        },
+        "Vnet-Lab2-VMWindowsOSVersion": {
+            "type": "string",
+            "defaultValue": "2016-Datacenter",
+            "allowedValues": [
+                "2016-Datacenter",
+                "2012-Datacenter",
+                "2012-R2-Datacenter",
+                "Windows-Server-Technical-Preview"
+            ]
+        },
+        "Vnet-Lab2-VM-storageType": {
+            "type": "string",
+            "defaultValue": "Standard_LRS",
+            "allowedValues": [
+                "Standard_LRS",
+                "Standard_ZRS",
+                "Standard_GRS",
+                "Standard_RAGRS",
+                "Premium_LRS"
+            ]
+        },
+        "Lab2-ASPName": {
+            "type": "string",
+			"defaultValue": "[concat('AS-N-RegInt-ASP-lab-001-',parameters('alias'))]",
+            "minLength": 1
+        },
+        "Lab2-ASPSKU": {
+            "type": "string",
+            "allowedValues": [
+                "Free",
+                "Shared",
+                "Basic",
+                "Standard"
+            ],
+            "defaultValue": "Standard"
+        },
+        "Lab2-ASPWorkerSize": {
+            "type": "string",
+            "allowedValues": [
+                "0",
+                "1",
+                "2"
+            ],
+            "defaultValue": "0"
+        }
+    },
+    "variables": {
+        "Vnet-Lab2-VMImagePublisher": "MicrosoftWindowsServer",
+        "Vnet-Lab2-VMImageOffer": "WindowsServer",
+        "Vnet-Lab2-VMOSDiskName": "AS-N-RegInt-VMOSDisk-lab-001",
+        "Vnet-Lab2-VMVmSize": "Standard_D1",
+        "Vnet-Lab2-VMVnetID": "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_Vnet_Lab2_Vnet2_name'))]",
+        "Vnet-Lab2-VMSubnetRef": "[concat(variables('Vnet-Lab2-VMVnetID'), '/subnets/default')]",
+        "Vnet-Lab2-VMStorageAccountContainerName": "vhds",
+        "Vnet-Lab2-VMNicName": "[concat(parameters('Vnet-Lab2-VMName'), 'NetworkInterface')]",
+        "Vnet-Lab2-VM-storageName": "[concat('asnregintvmstoragelab001', parameters('alias'))]",
+        "Vnet-Lab2-Vnet2Prefix": "20.0.0.0/16", 
+        "Lab2-WebappName": "[concat('AS-N-RegInt-webapp-lab-001-', parameters('alias'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2020-05-01",
+            "name": "[parameters('virtualNetworks_Vnet_Lab2_Vnet1_name')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "10.2.0.0/16"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "default",
+                        "properties": {
+                            "addressPrefix": "10.2.0.0/24",
+                            "delegations": [],
+                            "privateEndpointNetworkPolicies": "Enabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        }
+                    },
+                    {
+                        "name": "webappsubnet",
+                        "properties": {
+                            "addressPrefix": "10.2.1.0/24",
+                            "delegations": [],
+                            "privateEndpointNetworkPolicies": "Enabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        }
+                    }
+                ],
+                "virtualNetworkPeerings": [],
+                "enableDdosProtection": false,
+                "enableVmProtection": false
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2020-05-01",
+            "name": "[parameters('virtualNetworks_Vnet_Lab2_Vnet2_name')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "20.0.0.0/16"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "default",
+                        "properties": {
+                            "addressPrefix": "20.0.0.0/24",
+                            "delegations": [],
+                            "privateEndpointNetworkPolicies": "Enabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        }
+                    }
+                ],
+                "virtualNetworkPeerings": [],
+                "enableDdosProtection": false,
+                "enableVmProtection": false
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "apiVersion": "2020-05-01",
+            "name": "[concat(parameters('virtualNetworks_Vnet_Lab2_Vnet1_name'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_Vnet_Lab2_Vnet1_name'))]"
+            ],
+            "properties": {
+                "addressPrefix": "10.2.0.0/24",
+                "delegations": [],
+                "privateEndpointNetworkPolicies": "Enabled",
+                "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "apiVersion": "2020-05-01",
+            "name": "[concat(parameters('virtualNetworks_Vnet_Lab2_Vnet2_name'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_Vnet_Lab2_Vnet2_name'))]"
+            ],
+            "properties": {
+                "addressPrefix": "20.0.0.0/24",
+                "delegations": [],
+                "privateEndpointNetworkPolicies": "Enabled",
+                "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "apiVersion": "2020-05-01",
+            "name": "[concat(parameters('virtualNetworks_Vnet_Lab2_Vnet1_name'), '/webappsubnet')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_Vnet_Lab2_Vnet1_name'))]"
+            ],
+            "properties": {
+                "addressPrefix": "10.2.1.0/24",
+                "delegations": [],
+                "privateEndpointNetworkPolicies": "Enabled",
+                "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+        },
+        {
+            "name": "[variables('Vnet-Lab2-VMNicName')]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2015-06-15",
+            "dependsOn": [
+                "[concat('Microsoft.Network/virtualNetworks/', parameters('virtualNetworks_Vnet_Lab2_Vnet2_name'))]"
+            ],
+            "tags": {
+                "displayName": "Vnet-Lab2-VMNic"
+            },
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[variables('Vnet-Lab2-VMSubnetRef')]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "[parameters('Vnet-Lab2-VMName')]",
+            "type": "Microsoft.Compute/virtualMachines",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2015-06-15",
+            "dependsOn": [
+                "[concat('Microsoft.Storage/storageAccounts/', variables('Vnet-Lab2-VM-storageName'))]",
+                "[concat('Microsoft.Network/networkInterfaces/', variables('Vnet-Lab2-VMNicName'))]"
+            ],
+            "tags": {
+                "displayName": "Vnet-Lab2-VM"
+            },
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[variables('Vnet-Lab2-VMVmSize')]"
+                },
+                "osProfile": {
+                    "computerName": "[parameters('Vnet-Lab2-VMName')]",
+                    "adminUsername": "[parameters('Vnet-Lab2-VMAdminUsername')]",
+                    "adminPassword": "[parameters('Vnet-Lab2-VMAdminPassword')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "[variables('Vnet-Lab2-VMImagePublisher')]",
+                        "offer": "[variables('Vnet-Lab2-VMImageOffer')]",
+                        "sku": "[parameters('Vnet-Lab2-VMWindowsOSVersion')]",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "name": "Vnet-Lab2-VMOSDisk",
+                        "vhd": {
+                            "uri": "[concat('http://', variables('Vnet-Lab2-VM-storageName'), '.blob.core.windows.net/', variables('Vnet-Lab2-VMStorageAccountContainerName'), '/', variables('Vnet-Lab2-VMOSDiskName'), '.vhd')]"
+                        },
+                        "caching": "ReadWrite",
+                        "createOption": "FromImage"
+                    }
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('Vnet-Lab2-VMNicName'))]"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "[variables('Vnet-Lab2-VM-storageName')]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2015-06-15",
+            "dependsOn": [],
+            "tags": {
+                "displayName": "Vnet-Lab2-VM-storage"
+            },
+            "properties": {
+                "accountType": "[parameters('Vnet-Lab2-VM-storageType')]"
+            }
+        },
+        {
+            "name": "[variables('Lab2-WebappName')]",
+            "type": "Microsoft.Web/sites",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2015-08-01",
+            "dependsOn": [
+                "[concat('Microsoft.Web/serverfarms/', parameters('Lab2-ASPName'))]"
+            ],
+            "tags": {
+                "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('Lab2-ASPName'))]": "Resource",
+                "displayName": "Lab2-Webapp"
+            },
+            "properties": {
+                "name": "[variables('Lab2-WebappName')]",
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms/', parameters('Lab2-ASPName'))]"
+            }
+        },
+        {
+            "name": "[parameters('Lab2-ASPName')]",
+            "type": "Microsoft.Web/serverfarms",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2014-06-01",
+            "dependsOn": [],
+            "tags": {
+                "displayName": "Lab2-ASP"
+            },
+            "properties": {
+                "name": "[parameters('Lab2-ASPName')]",
+                "sku": "[parameters('Lab2-ASPSKU')]",
+                "workerSize": "[parameters('Lab2-ASPWorkerSize')]",
+                "numberOfWorkers": 1
+            }
+        }
+    ]
+}
