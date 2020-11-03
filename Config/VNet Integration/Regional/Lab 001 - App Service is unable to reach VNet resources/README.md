@@ -1,4 +1,4 @@
-# Azure App Service Gateway Required VNet Integration  Lab 1
+# Azure App Service Regional VNet Integration  Lab 1
 
 This is the first Level 200 lab for Azure App Service Regional VNet Integration.
 
