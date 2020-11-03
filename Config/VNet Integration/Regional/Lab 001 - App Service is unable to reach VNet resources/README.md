@@ -21,7 +21,7 @@ When it is working and when we tcpping from Kudu Console to private IP of VM, yo
 > The screenshot of the **deletion** of Resource Group used by the lab along with you **email address (in screenshot)** should be attached along with you email 
 
 ## Deployment Link:
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fvijaysaayi%2FAzure-App-Service-Labs%2Fmain%2FConfig%2FVNet%2520Integration%2FGateway%2520Required%2FLab%2520001%2520-%2520Unable%2520to%2520perform%2520intergration%2Ftemplate.json" target="_blank">
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fvijaysaayi%2FAzure-App-Service-Labs%2Fmain%2FConfig%2FVNet%2520Integration%2FRegional%2FLab%2520001%2520-%2520App%2520Service%2520is%2520unable%2520to%2520reach%2520VNet%2520resources%2Ftemplate.json" target="_blank">
     <img src="https://azurecomcdn.azureedge.net/mediahandler/acomblog/media/Default/blog/deploybutton.png"/>
 </a> 
 
