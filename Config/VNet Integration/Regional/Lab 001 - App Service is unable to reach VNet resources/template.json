@@ -15,7 +15,7 @@
         },
         "Vnet-Lab2-VMName": {
             "type": "string",
-            "defaultValue": "[concat('AS-N-RegInt-VirtualMachine-lab-001-',parameters('alias'))]",
+            "defaultValue": "[concat('VirtualMachine-lab-001-',parameters('alias'))]",
             "minLength": 1
         },
         "Vnet-Lab2-VMAdminUserName": {
@@ -82,7 +82,7 @@
         "Vnet-Lab2-VMSubnetRef": "[concat(variables('Vnet-Lab2-VMVnetID'), '/subnets/default')]",
         "Vnet-Lab2-VMStorageAccountContainerName": "vhds",
         "Vnet-Lab2-VMNicName": "[concat(parameters('Vnet-Lab2-VMName'), 'NetworkInterface')]",
-        "Vnet-Lab2-VM-storageName": "[concat('vmstoragelab001', parameters('alias'))]",
+        "Vnet-Lab2-VM-storageName": "[concat('storagelab001', parameters('alias'))]",
         "Vnet-Lab2-Vnet2Prefix": "20.0.0.0/16", 
         "Lab2-WebappName": "[concat('AS-N-RegInt-webapp-lab-001-', parameters('alias'))]"
     },
