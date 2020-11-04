@@ -4,8 +4,24 @@
     "parameters": {
         "nameOrAlias": {
             "type": "string"
-        }
-    },
+        },
+        
+        "VnetLocation": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+            "description": "Location for all resources."
+            }
+        },
+        "WebAppLocation" : {
+            "type" : "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Location for all resources."
+            }
+         }
+        },
+    
     "variables": {
         "sites_AS_N_GWRI_webapp_lab_001_name": "[concat('AS-N-GWRI-webapp-lab-001','-',parameters('nameOrAlias'))]",
         "serverfarms_AS_N_GWRI_asp_lab_001_name": "[concat('AS-N-GWRI-asp-lab-001','-',parameters('nameOrAlias'))]",
@@ -22,7 +38,7 @@
             "type": "Microsoft.Network/networkSecurityGroups",
             "apiVersion": "2020-05-01",
             "name": "[variables('networkSecurityGroups_AS_N_GWRI_VirtualNetwork_lab_001_NSG_CASG_name')]",
-            "location": "centralus",
+            "location": "[parameters('VNetLocation')]",
             "tags": {
                 "Creator": "Automatically added by CASG Azure Policy",
                 "CASG-Info": "http://aka.ms/cssbaselinesecurity"
@@ -158,7 +174,7 @@
             "type": "Microsoft.Network/publicIPAddresses",
             "apiVersion": "2020-05-01",
             "name": "[variables('publicIPAddresses_AS_N_GWRI_PublicIP_lab_001_name')]",
-            "location": "centralus",
+            "location": "[parameters('VNetLocation')]",
             "sku": {
                 "name": "Basic"
             },
@@ -174,7 +190,7 @@
             "type": "Microsoft.Network/publicIPAddresses",
             "apiVersion": "2020-05-01",
             "name": "[variables('publicIPAddresses_AS_N_GWRI_VM_lab_001_ip_name')]",
-            "location": "centralus",
+            "location": "[parameters('VNetLocation')]",
             "sku": {
                 "name": "Standard"
             },
@@ -193,7 +209,7 @@
             "type": "Microsoft.Web/serverfarms",
             "apiVersion": "2018-02-01",
             "name": "[variables('serverfarms_AS_N_GWRI_asp_lab_001_name')]",
-            "location": "South India",
+            "location": "[parameters('WebAppLocation')]",
             "sku": {
                 "name": "S1",
                 "tier": "Standard",
@@ -217,7 +233,7 @@
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2019-07-01",
             "name": "[variables('virtualMachines_AS_N_GWRI_VM_lab_001_name')]",
-            "location": "centralus",
+            "location": "[parameters('VNetLocation')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/networkInterfaces', variables('networkInterfaces_as_n_gwri_vm_lab_001688_name'))]"
             ],
@@ -414,7 +430,7 @@
             "type": "Microsoft.Network/virtualNetworks",
             "apiVersion": "2020-05-01",
             "name": "[variables('virtualNetworks_AS_N_GWRI_VirtualNetwork_lab_001_name')]",
-            "location": "centralus",
+            "location": "[parameters('VNetLocation')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroups_AS_N_GWRI_VirtualNetwork_lab_001_NSG_CASG_name'))]"
             ],
@@ -470,7 +486,7 @@
             "type": "Microsoft.Web/sites",
             "apiVersion": "2018-11-01",
             "name": "[variables('sites_AS_N_GWRI_webapp_lab_001_name')]",
-            "location": "South India",
+            "location": "[parameters('WebAppLocation')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Web/serverfarms', variables('serverfarms_AS_N_GWRI_asp_lab_001_name'))]"
             ],
@@ -508,7 +524,7 @@
             "type": "Microsoft.Web/sites/config",
             "apiVersion": "2018-11-01",
             "name": "[concat(variables('sites_AS_N_GWRI_webapp_lab_001_name'), '/web')]",
-            "location": "South India",
+            "location": "[parameters('WebAppLocation')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Web/sites', variables('sites_AS_N_GWRI_webapp_lab_001_name'))]"
             ],
@@ -581,7 +597,7 @@
             "type": "Microsoft.Web/sites/hostNameBindings",
             "apiVersion": "2018-11-01",
             "name": "[concat(variables('sites_AS_N_GWRI_webapp_lab_001_name'), '/', variables('sites_AS_N_GWRI_webapp_lab_001_name'), '.azurewebsites.net')]",
-            "location": "South India",
+            "location": "[parameters('WebAppLocation')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Web/sites', variables('sites_AS_N_GWRI_webapp_lab_001_name'))]"
             ],
@@ -594,7 +610,7 @@
             "type": "Microsoft.Network/networkInterfaces",
             "apiVersion": "2020-05-01",
             "name": "[variables('networkInterfaces_as_n_gwri_vm_lab_001688_name')]",
-            "location": "centralus",
+            "location": "[parameters('VNetLocation')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddresses_AS_N_GWRI_VM_lab_001_ip_name'))]",
                 "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworks_AS_N_GWRI_VirtualNetwork_lab_001_name'), 'VirtualMachineSubnet')]"
@@ -628,7 +644,7 @@
             "type": "Microsoft.Network/virtualNetworkGateways",
             "apiVersion": "2020-05-01",
             "name": "[variables('virtualNetworkGateways_AS_N_GWRI_Gateway_lab_001_name')]",
-            "location": "centralus",
+            "location": "[parameters('VNetLocation')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddresses_AS_N_GWRI_PublicIP_lab_001_name'))]",
                 "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworks_AS_N_GWRI_VirtualNetwork_lab_001_name'), 'GatewaySubnet')]"
